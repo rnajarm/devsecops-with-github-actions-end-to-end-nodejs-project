@@ -20,7 +20,7 @@ jobs:
       with:
         args: >
           -Dsonar.organization=javareachableplayground
-          -Dsonar.projectKey=dotnetgithubactionsproject
+          -Dsonar.projectKey=javareachableplayground
   security:
     runs-on: ubuntu-latest
     needs: build
