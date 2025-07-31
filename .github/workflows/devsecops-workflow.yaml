@@ -1,37 +1,41 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Build code, run unit test, run SAST, SCA, DAST security scans for NodeJs
 on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Run unit tests and SAST scan on the source code 
+    name: Run unit tests and SAST scan on the source code
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 21
-        cache: npm
-    - run: npm install
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.organization=javareachableplayground
-          -Dsonar.projectKey=javareachableplayground
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: npm
+      - run: npm install
+      - run: npm test
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=javareachableplayground
+            -Dsonar.projectKey=javareachableplayground
   security:
     runs-on: ubuntu-latest
     needs: build
     name: Run the SCA scan on the source code
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: RunSnyk to check for vulnerabilities
         uses: snyk/actions/node@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
   zap_scan:
     runs-on: ubuntu-latest
     needs: security
@@ -44,6 +48,8 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-          target: 'http://example.com/'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
+          target: "http://example.com/"
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
+          issue_title: false
+          create_issue: false
