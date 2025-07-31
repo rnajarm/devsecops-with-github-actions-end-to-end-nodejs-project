@@ -19,7 +19,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.organization=dotnetgithubactionsorg
+          -Dsonar.organization=javareachableplayground
           -Dsonar.projectKey=dotnetgithubactionsproject
   security:
     runs-on: ubuntu-latest
