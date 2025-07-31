@@ -1,0 +1,6 @@
+# ZAP Baseline Rules
+# Format: ID	THRESHOLD	[IGNORE	[REASON]]
+# 10021	IGNORE	Ignore X-Content-Type-Options header
+# 10020	IGNORE	Ignore X-Frame-Options header
+
+# Accept all other rules at default levels
